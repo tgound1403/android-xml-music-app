@@ -1,9 +1,22 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Musicapp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
+<resources>
+    <!-- Theme cơ bản -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Màu chính -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
 
-    <style name="Theme.Musicapp" parent="Base.Theme.Musicapp" />
+        <!-- Màu phụ -->
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+
+        <!-- Màu nền và chữ -->
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary</item>
+
+        <!-- Tùy chỉnh thêm (nếu cần) -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:navigationBarColor">@color/background</item>
+    </style>
 </resources>

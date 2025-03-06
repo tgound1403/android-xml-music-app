@@ -1,127 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    android:id="@+id/main"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="16dp"
-    android:background="@drawable/rounded_background"
-    android:backgroundTint="@color/white"
     android:clipToOutline="true"
-    tools:context=".presentation.activities.MainActivity">
+    app:cardCornerRadius="12dp">
 
-    <ImageView
-        android:id="@+id/cover"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_margin="16dp"
-        android:background="@drawable/rounded_background"
-        android:clipToOutline="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.072"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <LinearLayout
-        android:id="@+id/controls"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:baselineAligned="true"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/seekBar"
-        app:layout_constraintVertical_bias="0.7"
-        tools:layout_editor_absoluteX="0dp">
+        android:layout_height="match_parent"
+        tools:context=".presentation.activities.MainActivity">
 
-        <ImageButton
-            android:id="@+id/prevBtn"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:background="@drawable/circle_background"
-            android:backgroundTint="@color/black"
+        <ImageView
+            android:id="@+id/cover"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_margin="16dp"
+            android:background="@drawable/rounded_background"
             android:clipToOutline="true"
-            tools:srcCompat="@drawable/skip_previous_24px" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
 
-        <ImageButton
-            android:id="@+id/playBtn"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginHorizontal="8dp"
-            android:background="@drawable/circle_background"
-            android:backgroundTint="@color/black"
-            android:clipToOutline="true"
-            tools:srcCompat="@drawable/play_arrow_24px" />
+            app:layout_constraintHorizontal_bias="0.493"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.072"
+            tools:srcCompat="@tools:sample/avatars" />
 
-        <ImageButton
-            android:id="@+id/nextBtn"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:background="@drawable/circle_background"
-            android:backgroundTint="@color/black"
-            android:clipToOutline="true"
-            tools:srcCompat="@drawable/skip_next_24px" />
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="true"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/seekBar"
+            app:layout_constraintVertical_bias="0.7"
+            tools:layout_editor_absoluteX="0dp">
 
-    <TextView
-        android:id="@+id/currentTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/bvp_regular"
-        android:text="0:00"
-        app:layout_constraintBottom_toTopOf="@id/seekBar"
-        app:layout_constraintStart_toStartOf="parent" />
+            <ImageButton
+                android:id="@+id/prevBtn"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/circle_background"
+                app:backgroundTint="?attr/colorPrimary"
+                android:textColor="?attr/colorOnPrimary"
+                app:iconTint="?attr/colorOnPrimary"
+                android:clipToOutline="true"
+                tools:srcCompat="@drawable/skip_previous_24px" />
 
-    <TextView
-        android:id="@+id/totalTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/bvp_regular"
-        android:text="3:45"
-        app:layout_constraintBottom_toTopOf="@id/seekBar"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <ImageButton
+                android:id="@+id/playBtn"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@drawable/circle_background"
+                app:backgroundTint="?attr/colorPrimary"
+                android:textColor="?attr/colorOnPrimary"
+                app:iconTint="?attr/colorOnPrimary"
+                android:clipToOutline="true"
+                tools:srcCompat="@drawable/play_arrow_24px" />
 
-    <SeekBar
-        android:id="@+id/seekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/controls"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/artist"
-        app:layout_constraintVertical_bias="0.3" />
+            <ImageButton
+                android:id="@+id/nextBtn"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/circle_background"
+                app:backgroundTint="?attr/colorPrimary"
+                android:textColor="?attr/colorOnPrimary"
+                app:iconTint="?attr/colorOnPrimary"
+                android:clipToOutline="true"
+                tools:srcCompat="@drawable/skip_next_24px" />
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/artist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:fontFamily="@font/bvp_light"
-        android:textColor="#757575"
-        android:textSize="16sp"
-        android:text="This is place will display artist"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/songName" />
+        <TextView
+            android:id="@+id/currentTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="4dp"
+            android:fontFamily="@font/bvp_regular"
+            android:text="0:00"
+            app:layout_constraintBottom_toTopOf="@id/seekBar"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/songName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="24dp"
-        android:layout_marginStart="24dp"
-        android:fontFamily="@font/bvp_bold"
-        android:text="This is place will display song name"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cover" />
+        <TextView
+            android:id="@+id/totalTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="4dp"
+            android:fontFamily="@font/bvp_regular"
+            android:text="3:45"
+            app:layout_constraintBottom_toTopOf="@id/seekBar"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/controls"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/artist"
+            app:layout_constraintVertical_bias="0.3" />
+
+        <TextView
+            android:id="@+id/artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:fontFamily="@font/bvp_light"
+            android:text="This is place will display artist"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/songName" />
+
+        <TextView
+            android:id="@+id/songName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="24dp"
+            android:layout_marginStart="24dp"
+            android:fontFamily="@font/bvp_bold"
+            android:text="This is place will display song name"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cover" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

@@ -76,7 +76,9 @@ class MainViewModel @Inject constructor(private val repository: SongRepository) 
     fun getSongByAlbum(albumName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val data = repository.getSongByAlbum(albumName)
-            _songsByFactor.value = data
+            withContext(Dispatchers.Main) {
+                _songsByFactor.value = data
+            }
         }
 
     }

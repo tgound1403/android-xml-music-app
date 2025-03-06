@@ -46,7 +46,6 @@ class SongsFragment(private val factor: Factor) : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.container.setBackgroundColor(resources.getColor(R.color.white))
         emitLoadingState()
         binding.apply {
             backBtn.setImageResource(R.drawable.chevron_left_24px)
