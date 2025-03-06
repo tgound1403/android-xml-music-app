@@ -28,7 +28,7 @@ class SongsFragment(private val factor: Factor) : Fragment() {
     ): View {
         _binding = FragmentSongsBinding.inflate(inflater, container, false)
 
-        adapter = TracksAdapter(emptyList()) { song ->
+        adapter = TracksAdapter(mutableListOf()) { song ->
             Intent(requireContext(), PlayerActivity::class.java).apply {
                 PlaybackState.currentList.value = viewModel.songsByFactor.value
                 PlaybackState.currentSong.value = song
@@ -60,7 +60,7 @@ class SongsFragment(private val factor: Factor) : Fragment() {
             } else {
                 "Songs in ${viewModel.songsByFactor.value?.get(0)?.album}"
             }
-            adapter.updateData(songs)
+            adapter.updateData(songs.toMutableList())
             emitLoadSuccessState()
         }
     }

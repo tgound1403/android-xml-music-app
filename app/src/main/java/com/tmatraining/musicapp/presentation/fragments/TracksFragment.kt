@@ -27,7 +27,7 @@ class TracksFragment : Fragment() {
     ): View {
         _binding = FragmentTracksBinding.inflate(inflater, container, false)
 
-        adapter = TracksAdapter(emptyList()) { song ->
+        adapter = TracksAdapter(mutableListOf()) { song ->
             Intent(requireContext(), PlayerActivity::class.java).apply {
                 PlaybackState.currentList.value = viewModel.tracks.value
                 PlaybackState.currentSong.value = song
@@ -62,6 +62,9 @@ class TracksFragment : Fragment() {
             emitLoadSuccessState()
         } else {
             emitEmptyDataState()
+        }
+        PlaybackState.currentSong.observe(viewLifecycleOwner) {
+            binding.playingListRecyclerView.adapter?.notifyDataSetChanged()
         }
     }
 

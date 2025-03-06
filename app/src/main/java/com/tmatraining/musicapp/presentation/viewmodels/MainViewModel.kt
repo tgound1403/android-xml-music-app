@@ -17,8 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val repository: SongRepository) : ViewModel() {
-    private val _tracks = MutableLiveData<List<Song>>()
-    val tracks: LiveData<List<Song>> get() = _tracks
+    private val _tracks = MutableLiveData<MutableList<Song>>()
+    val tracks: LiveData<MutableList<Song>> get() = _tracks
     private val _artists = MutableLiveData<List<Artist>>()
     val artists: LiveData<List<Artist>> get() = _artists
     private val _albums = MutableLiveData<List<Album>>()
@@ -31,7 +31,9 @@ class MainViewModel @Inject constructor(private val repository: SongRepository) 
     fun fetchSongOnDevice() {
         viewModelScope.launch(Dispatchers.IO) {
             val data = repository.getAllSongs()
-            withContext(Dispatchers.Main) { _tracks.value = data }
+            withContext(Dispatchers.Main) {
+                _tracks.value = data.toMutableList()
+            }
         }
     }
 
