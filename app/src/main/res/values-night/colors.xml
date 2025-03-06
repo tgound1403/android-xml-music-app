@@ -1,17 +1,17 @@
 <resources>
-    <!-- Màu chính (Primary) - Xanh lá cây đậm giống Spotify -->
+    <!-- Màu chính (Primary) - Giữ nguyên xanh lá Spotify -->
     <color name="colorPrimary">#1DB954</color>
-    <color name="colorPrimaryVariant">#169F47</color> <!-- Biến thể tối hơn -->
-    <color name="colorOnPrimary">#FFFFFF</color> <!-- Màu chữ trên nền primary -->
+    <color name="colorPrimaryVariant">#169F47</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
 
     <!-- Màu phụ (Secondary) -->
     <color name="colorSecondary">#FF4081</color>
     <color name="colorOnSecondary">#FFFFFF</color>
 
     <!-- Màu nền và chữ -->
-    <color name="background">#FFFFFF</color> <!-- Nền trắng -->
-    <color name="text_color">#121212</color> <!-- Chữ đen đậm -->
-    <color name="text_color_secondary">#757575</color> <!-- Chữ xám nhạt -->
+    <color name="background">#121212</color> <!-- Nền đen đậm -->
+    <color name="text_color">#FFFFFF</color> <!-- Chữ trắng -->
+    <color name="text_color_secondary">#B0B0B0</color> <!-- Chữ xám nhạt -->
 
     <!-- Màu nút -->
     <color name="button_background">#1DB954</color>
