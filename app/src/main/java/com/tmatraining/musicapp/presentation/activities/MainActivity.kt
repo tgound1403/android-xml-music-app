@@ -112,12 +112,12 @@ class MainActivity : AppCompatActivity() {
         activityViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                _binding.tabTitle?.text  = when (position) {
-                    0 -> HomeTab.TRACKS.title
-                    1 -> HomeTab.PLAYLISTS.title
-                    2 -> HomeTab.ARTISTS.title
-                    3 -> HomeTab.ALBUMS.title
-                    else -> HomeTab.NONE.title
+                _binding.tabTitle?.text = when (position) {
+                    0 -> getString(R.string.tracks)
+                    1 -> getString(R.string.playlists)
+                    2 -> getString(R.string.artist)
+                    3 -> getString(R.string.albums)
+                    else -> ""
                 }
             }
         })
@@ -138,22 +138,14 @@ class MainActivity : AppCompatActivity() {
                 else -> null
             }
             tab.text = when (position) {
-                0 -> HomeTab.TRACKS.title
-                1 -> HomeTab.PLAYLISTS.title
-                2 -> HomeTab.ARTISTS.title
-                3 -> HomeTab.ALBUMS.title
-                else -> HomeTab.NONE.title
+                0 -> getString(R.string.tracks)
+                1 -> getString(R.string.playlists)
+                2 -> getString(R.string.artist)
+                3 -> getString(R.string.albums)
+                else -> ""
             }
         }.attach()
     }
 
-
 }
 
-enum class HomeTab(val title: String) {
-    TRACKS("Tracks"),
-    PLAYLISTS("Playlists"),
-    ARTISTS("Artists"),
-    ALBUMS("Albums"),
-    NONE("");
-}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ứng dụng chơi nhạc</string>
+    <string name="tracks">Bài hát</string>
+    <string name="playlists">Danh sách phát</string>
+    <string name="artist">Nghệ sĩ</string>
+    <string name="albums">Albums</string>
+    <string name="queue">Phát tiếp theo</string>
+    <string name="similarArtists">Nghệ sĩ tương tự</string>
+</resources>

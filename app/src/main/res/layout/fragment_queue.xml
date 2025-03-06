@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/bvp_bold"
             android:paddingHorizontal="16dp"
-            android:text="Queue"
+            android:text="@string/queue"
             android:textSize="36sp" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator

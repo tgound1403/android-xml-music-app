@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.tmatraining.musicapp.R
 import com.tmatraining.musicapp.core.db.entity.Artist
 import com.tmatraining.musicapp.core.db.entity.Song
 import com.tmatraining.musicapp.core.services.PlaybackState
@@ -46,7 +47,7 @@ class DetailFragment : Fragment() {
             songArtist.text = data.artist
             songAlbum.text = data.album
             songDuration.text = data.duration.milliseconds.toString()
-            similarTitle.text = "Similar Artists"
+            similarTitle.text = getString(R.string.similarArtists)
             cover.setImageURI(Uri.parse(data.albumArtUri))
             similarList.apply {
                 adapter = SimilarAdapter(artistList.filter { e -> e.name != data.artist }) {}

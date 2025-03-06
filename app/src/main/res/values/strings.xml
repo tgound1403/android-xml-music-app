@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">Music App</string>
+        <string name="app_name">Music Player App</string>
+        <string name="tracks">Tracks</string>
+        <string name="playlists">Playlists</string>
+        <string name="artist">Artists</string>
+        <string name="albums">Albums</string>
+        <string name="queue">Queue</string>
+        <string name="similarArtists">Similar Artists</string>
 </resources>
