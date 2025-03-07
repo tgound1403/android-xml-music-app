@@ -2,9 +2,11 @@ package com.tmatraining.musicapp.presentation.activities
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -33,46 +35,81 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    companion object {
+        private const val STORAGE_PERMISSION_CODE = 1
+        private const val TAG = "MainActivity"
+    }
+
     private lateinit var _binding: ActivityMainBinding
-    private lateinit var activityViewPager: ViewPager2
-    private lateinit var activityTabLayout: TabLayout
+    private var activityViewPager: ViewPager2? = null
+    private var activityTabLayout: TabLayout? = null
 
     private val mainViewModel: MainViewModel by viewModels()
     private var data = emptyList<Song>()
+    private var currentPosition: Int? = null
+    private lateinit var currentFragment: Fragment
+
 
     private val dataObserver = { e: List<Song> -> data = e }
 
-    private fun checkPermission(): Boolean {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                1
-            )
-            return false
-        }
-        return true
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (checkPermission()) {
-            lifecycleScope.launch(Dispatchers.IO) {
-                mainViewModel.fetchSongOnDevice()
-                mainViewModel.getArtists()
-                mainViewModel.getAlbums()
-                mainViewModel.getPlaylists()
-            }
-        } else {
-            checkPermission()
-        }
+        Log.i(TAG, "onCreate $data")
 
+        requestStoragePermission()
+        setupOrientationLayout(resources.configuration)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == STORAGE_PERMISSION_CODE && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            fetchMediaData()
+        }
+    }
+
+    private fun requestStoragePermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE
+            )
+        } else {
+            fetchMediaData()
+        }
+    }
+
+    private fun fetchMediaData() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            with(mainViewModel) {
+                fetchSongOnDevice()
+                getArtists()
+                getAlbums()
+                getPlaylists()
+            }
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        setupOrientationLayout(newConfig)
+    }
+
+    private fun setupOrientationLayout(config: Configuration) {
+        when (config.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> buildLayoutOnPortraitMode()
+            Configuration.ORIENTATION_LANDSCAPE -> buildLayoutOnLandscapeMode()
+        }
+    }
+
+    private fun buildLayoutOnPortraitMode() {
         _binding = ActivityMainBinding.inflate(LayoutInflater.from(this)).also {
-            activityViewPager = it.viewPager
-            activityTabLayout = it.tabLayout
+            activityViewPager = it.viewPager!!
+            activityTabLayout = it.tabLayout!!
             setContentView(it.root)
         }
 
@@ -82,21 +119,77 @@ class MainActivity : AppCompatActivity() {
         setUpTabLayout()
     }
 
+    private fun buildLayoutOnLandscapeMode() {
+        _binding = ActivityMainBinding.inflate(LayoutInflater.from(this)).also {
+            setContentView(it.root)
+            it.tracksBtn?.setOnClickListener {
+                changeToFragment(TracksFragment())
+            }
+            it.playlistsBtn?.setOnClickListener {
+                changeToFragment(PlaylistsFragment())
+            }
+            it.artistsBtn?.setOnClickListener {
+                changeToFragment(ArtistsFragment())
+            }
+            it.albumsBtn?.setOnClickListener {
+                changeToFragment(AlbumsFragment())
+            }
+
+            currentFragment = when (currentPosition) {
+                0 -> TracksFragment()
+                1 -> PlaylistsFragment()
+                2 -> ArtistsFragment()
+                3 -> AlbumsFragment()
+                else -> EmptyFragment()
+            }
+            it.tabTitle.text = when (currentPosition) {
+                0 -> getString(R.string.tracks)
+                1 -> getString(R.string.playlists)
+                2 -> getString(R.string.artist)
+                3 -> getString(R.string.albums)
+                else -> ""
+            }
+
+            supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, currentFragment)
+                .addToBackStack(null).commit()
+        }
+    }
+
+    private fun changeToFragment(fragment: Fragment) {
+        _binding.tabTitle.text = when (fragment) {
+            is TracksFragment -> getString(R.string.tracks)
+            is PlaylistsFragment -> getString(R.string.playlists)
+            is ArtistsFragment -> getString(R.string.artist)
+            is AlbumsFragment -> getString(R.string.albums)
+            else -> ""
+        }
+        supportFragmentManager.apply {
+            popBackStack()
+            beginTransaction().remove(currentFragment).add(R.id.fragmentContainer, fragment)
+                .addToBackStack(null).commit()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        if (PlaybackState.currentSong.value != null) {
-            with(MiniPlayerFragment()) {
-                if (!supportFragmentManager.fragments.contains(this)) {
-                    supportFragmentManager.beginTransaction()
-                        .add(R.id.overlay_container, this)
-                        .commit()
+        showMiniPlayer()
+    }
+
+    private fun showMiniPlayer() {
+        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (PlaybackState.currentSong.value != null) {
+                with(MiniPlayerFragment()) {
+                    if (!supportFragmentManager.fragments.contains(this)) {
+                        supportFragmentManager.beginTransaction().add(R.id.overlay_container, this)
+                            .commit()
+                    }
                 }
             }
         }
     }
 
     private fun setUpViewPager() {
-        activityViewPager.adapter = object : FragmentStateAdapter(this) {
+        activityViewPager?.adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount(): Int = 4
 
             override fun createFragment(position: Int): Fragment {
@@ -109,10 +202,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        activityViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        activityViewPager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                _binding.tabTitle?.text = when (position) {
+                currentPosition = position
+                _binding.tabTitle.text = when (position) {
                     0 -> getString(R.string.tracks)
                     1 -> getString(R.string.playlists)
                     2 -> getString(R.string.artist)
@@ -129,7 +223,7 @@ class MainActivity : AppCompatActivity() {
                 .loadDrawable(this@MainActivity)
         }
 
-        TabLayoutMediator(activityTabLayout, activityViewPager) { tab, position ->
+        TabLayoutMediator(activityTabLayout!!, activityViewPager!!) { tab, position ->
             tab.icon = when (position) {
                 0 -> loadDrawable(R.drawable.play_arrow_24px)
                 1 -> loadDrawable(R.drawable.books_movies_and_music_24px)
