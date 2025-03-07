@@ -18,6 +18,9 @@ import org.greenrobot.eventbus.ThreadMode
 
 
 class MiniPlayerFragment() : Fragment() {
+    companion object {
+        private const val TAG = "MiniPlayerFragment"
+    }
     private lateinit var _binding: MiniPlayerBinding
     private val binding get() = _binding
     private var song: Song? = null
@@ -45,10 +48,10 @@ class MiniPlayerFragment() : Fragment() {
                 controlButton.setOnClickListener {
                     if (!isPlaying) {
                         controlButton.setImageResource(R.drawable.stop_24px)
-                        EventBus.getDefault().post(MiniPlayerEvent("play"))
+                        EventBus.getDefault().post(MiniPlayerEvent(MiniPlayerAction.PLAY))
                     } else {
                         controlButton.setImageResource(R.drawable.play_arrow_24px)
-                        EventBus.getDefault().post(MiniPlayerEvent("pause"))
+                        EventBus.getDefault().post(MiniPlayerEvent(MiniPlayerAction.PAUSE))
                     }
                 }
             }
@@ -74,5 +77,10 @@ class MiniPlayerFragment() : Fragment() {
     fun onMiniPlayerEvent(event: MiniPlayerEvent?) {}
 }
 
-data class MiniPlayerEvent(val action: String)
+data class MiniPlayerEvent(val action: MiniPlayerAction)
+
+enum class MiniPlayerAction {
+    PLAY,
+    PAUSE
+}
 

@@ -16,24 +16,27 @@ import android.view.animation.ScaleAnimation
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat.startForegroundService
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.tmatraining.musicapp.R
 import com.tmatraining.musicapp.core.db.entity.Song
 import com.tmatraining.musicapp.core.services.MusicService
 import com.tmatraining.musicapp.core.services.PlaybackState
 import com.tmatraining.musicapp.databinding.FragmentPlayerBinding
 import com.tmatraining.musicapp.presentation.viewmodels.PlayerViewModel
-import dagger.hilt.android.scopes.FragmentScoped
+import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import kotlin.time.Duration.Companion.milliseconds
 
-@FragmentScoped
+@AndroidEntryPoint
 class PlayerFragment : Fragment() {
+    companion object {
+        private const val TAG = "PlayerFragment"
+    }
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: PlayerViewModel by viewModels()
+    private val viewModel: PlayerViewModel by activityViewModels()
     private var musicService: MusicService? = null
 
     private val serviceConnection = object : ServiceConnection {
@@ -41,7 +44,7 @@ class PlayerFragment : Fragment() {
             val binder = service as MusicService.MusicBinder
             musicService = binder.getService()
             viewModel.setMusicService(musicService!!)
-            viewModel.updatePosition()
+            viewModel.initialize()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -71,37 +74,35 @@ class PlayerFragment : Fragment() {
             nextBtn.setImageResource(R.drawable.skip_next_24px)
 
             PlaybackState.currentSong.observe(viewLifecycleOwner) { song ->
-                if (PlaybackState.isPlaying.value == true) animateCoverTransition(song)
-                prevBtn.setOnClickListener {
-                    it.startButtonAnimation()
-                    musicService?.playPrev()
-                }
-                nextBtn.setOnClickListener {
-                    it.startButtonAnimation()
-                    musicService?.playNext()
+                song?.let {
+                    updateUI(it)
+                    if (PlaybackState.isPlaying.value == true) animateCoverTransition(it)
                 }
             }
 
             PlaybackState.isPlaying.observe(viewLifecycleOwner) { isPlaying ->
-                playBtn.setImageResource(if (isPlaying) R.drawable.stop_24px else R.drawable.play_arrow_24px)
-                playBtn.setOnClickListener {
-                    viewModel.togglePlayPause()
+                playBtn.setImageResource(if (isPlaying == true) R.drawable.stop_24px else R.drawable.play_arrow_24px)
+            }
+
+            PlaybackState.currentPosition.observe(viewLifecycleOwner) { position ->
+                position?.let {
+                    currentTime.text = it.toLong().milliseconds.toString()
+                    seekBar.progress = it
                 }
             }
 
-            viewModel.currentPosition.observe(viewLifecycleOwner) { position ->
-                currentTime.text = position.toLong().milliseconds.toString()
-                seekBar.progress = position
-                if (position >= seekBar.max) {
-                    musicService?.playNext()
-                    updateUI(PlaybackState.currentSong.value!!)
-                }
+            playBtn.setOnClickListener { viewModel.togglePlayPause() }
+            prevBtn.setOnClickListener {
+                it.startButtonAnimation()
+                viewModel.playPrev()
+            }
+            nextBtn.setOnClickListener {
+                it.startButtonAnimation()
+                viewModel.playNext()
             }
 
             seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(
-                    seekBar: SeekBar?, progress: Int, fromUser: Boolean
-                ) {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                     if (fromUser) viewModel.seekTo(progress)
                 }
 
@@ -111,21 +112,19 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this)
-        musicService?.continuePlay()
-    }
-
     override fun onResume() {
         super.onResume()
-        if (PlaybackState.isPlaying.value != true) viewModel.playSong(PlaybackState.currentSong.value!!)
-        PlaybackState.currentSong.value?.let { updateUI(it) }
+        viewModel.initialize()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        requireActivity().unbindService(serviceConnection)
     }
 
     private fun updateUI(song: Song) {
@@ -147,7 +146,6 @@ class PlayerFragment : Fragment() {
                 override fun onAnimationEnd(animation: Animation?) {
                     binding.cover.setImageURI(Uri.parse(newSong.albumArtUri))
                     updateUI(newSong)
-
                     val fadeIn = AlphaAnimation(0f, 1f).apply {
                         duration = 300
                         fillAfter = true
@@ -163,18 +161,18 @@ class PlayerFragment : Fragment() {
 
     private fun View.startButtonAnimation() {
         val scaleUp = ScaleAnimation(
-            1f, 1.2f,
-            1f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
+            1f, 1.2f, 1f, 1.2f,
+            Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
         ).apply {
             duration = 100
             fillAfter = false
         }
 
         val scaleDown = ScaleAnimation(
-            1.2f, 1f,
-            1.2f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
+            1.2f, 1f, 1.2f, 1f,
+            Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
         ).apply {
-            duration = 100 //
+            duration = 100
             fillAfter = false
         }
 
@@ -183,29 +181,23 @@ class PlayerFragment : Fragment() {
             override fun onAnimationEnd(animation: Animation?) {
                 startAnimation(scaleDown)
             }
-
             override fun onAnimationRepeat(animation: Animation?) {}
         })
 
         startAnimation(scaleUp)
     }
 
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMiniPlayerEvent(event: MiniPlayerEvent?) {
-        if (event?.action == "play") {
-            musicService?.continuePlay()
-        } else if (event?.action == "pause") {
-            musicService?.pause()
+        when (event?.action) {
+            MiniPlayerAction.PLAY -> viewModel.continuePlay()
+            MiniPlayerAction.PAUSE -> viewModel.pause()
+            else -> null
         }
     }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onPlayEvent(event: PlayEvent) {
-        musicService?.startPlaying(event.data)
-    }
 }
-
-data class PlayEvent(
-    val data: Song,
-)

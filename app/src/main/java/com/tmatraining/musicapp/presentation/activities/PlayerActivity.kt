@@ -18,15 +18,19 @@ import com.tmatraining.musicapp.presentation.fragments.EmptyFragment
 import com.tmatraining.musicapp.presentation.fragments.PlayerFragment
 import com.tmatraining.musicapp.presentation.fragments.QueueFragment
 import com.tmatraining.musicapp.presentation.viewmodels.MainViewModel
+import com.tmatraining.musicapp.presentation.viewmodels.PlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PlayerActivity : AppCompatActivity() {
+    companion object {
+        private const val TAG = "PlayerActivity"
+    }
     private lateinit var _binding: ActivityPlayerBinding
     private lateinit var activityTabLayout: TabLayout
     private lateinit var activityViewPager: ViewPager2
-    private val TAG = this.javaClass.simpleName
     private val mainViewModel: MainViewModel by viewModels()
+    private val playerViewModel: PlayerViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
