@@ -80,7 +80,7 @@ class AlbumsFragment() : Fragment() {
 
     private fun getSpanCount(): Int {
         return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            4
+            3
         } else {
             2
         }

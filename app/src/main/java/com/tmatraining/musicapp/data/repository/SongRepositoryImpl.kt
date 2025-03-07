@@ -6,6 +6,8 @@ import com.tmatraining.musicapp.core.db.entity.Song
 import com.tmatraining.musicapp.data.datasource.local.SongDataSource
 import com.tmatraining.musicapp.data.datasource.local.SongLocalDataSource
 import com.tmatraining.musicapp.domain.SongRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SongRepositoryImpl @Inject constructor(
@@ -13,29 +15,29 @@ class SongRepositoryImpl @Inject constructor(
     private val songLocalDataSource: SongLocalDataSource
 ) : SongRepository {
 
-    override suspend fun getAllSongs(): List<Song> {
+    override suspend fun getAllSongs(): List<Song> = withContext(Dispatchers.IO) {
         val data = songDataSource.getSongsFromDownloads()
         songLocalDataSource.insertAll(data)
-        return songLocalDataSource.getAllSongs()
+        return@withContext songLocalDataSource.getAllSongs()
     }
 
-    override suspend fun getArtists(): List<Artist> {
-        return songDataSource.getArtists()
+    override suspend fun getArtists(): List<Artist> = withContext(Dispatchers.IO) {
+        return@withContext songDataSource.getArtists()
     }
 
-    override suspend fun getAlbums(): List<Album> {
-        return songDataSource.getAlbums()
+    override suspend fun getAlbums(): List<Album> = withContext(Dispatchers.IO) {
+        return@withContext songDataSource.getAlbums()
     }
 
-    override suspend fun getPlaylists(): List<Album> {
-        return songDataSource.getPlaylists()
+    override suspend fun getPlaylists(): List<Album> = withContext(Dispatchers.IO) {
+        return@withContext songDataSource.getPlaylists()
     }
 
-    override suspend fun getSongByArtist(artistName: String): List<Song> {
-        return songDataSource.getSongByArtist(artistName)
+    override suspend fun getSongByArtist(artistName: String): List<Song> = withContext(Dispatchers.IO) {
+        return@withContext songDataSource.getSongByArtist(artistName)
     }
 
-    override suspend fun getSongByAlbum(albumName: String): List<Song> {
-        return songDataSource.getSongByAlbum(albumName)
+    override suspend fun getSongByAlbum(albumName: String): List<Song> = withContext(Dispatchers.IO) {
+        return@withContext songDataSource.getSongByAlbum(albumName)
     }
 }
