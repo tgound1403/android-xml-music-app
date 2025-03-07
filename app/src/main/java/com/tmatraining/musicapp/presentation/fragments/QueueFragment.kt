@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +16,8 @@ import com.tmatraining.musicapp.R
 import com.tmatraining.musicapp.core.services.PlaybackState
 import com.tmatraining.musicapp.databinding.FragmentQueueBinding
 import com.tmatraining.musicapp.presentation.adapters.TracksAdapter
+import com.tmatraining.musicapp.presentation.viewmodels.PlayerViewModel
 import dagger.hilt.android.scopes.FragmentScoped
-import org.greenrobot.eventbus.EventBus
 
 @FragmentScoped
 class QueueFragment : Fragment() {
@@ -24,6 +25,7 @@ class QueueFragment : Fragment() {
     private var _binding: FragmentQueueBinding? = null
     private val binding get() = _binding!!
     private lateinit var tracksAdapter: TracksAdapter
+    private val playerViewModel by activityViewModels<PlayerViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -65,7 +67,7 @@ class QueueFragment : Fragment() {
             val queueList = tracks.subList(index, tracks.size).toMutableList()
 
             tracksAdapter = TracksAdapter(queueList) { song ->
-                EventBus.getDefault().post(PlayEvent(song))
+               playerViewModel.playSong(song)
             }
             binding.playingListRecyclerView.adapter = tracksAdapter
 
