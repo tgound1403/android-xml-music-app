@@ -70,14 +70,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestStoragePermission() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE
-            )
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
         } else {
             fetchMediaData()
         }
@@ -150,8 +145,7 @@ class MainActivity : AppCompatActivity() {
                 else -> ""
             }
 
-            supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, currentFragment)
-                .addToBackStack(null).commit()
+            supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, currentFragment).addToBackStack(null).commit()
         }
     }
 
@@ -165,8 +159,7 @@ class MainActivity : AppCompatActivity() {
         }
         supportFragmentManager.apply {
             popBackStack()
-            beginTransaction().remove(currentFragment).add(R.id.fragmentContainer, fragment)
-                .addToBackStack(null).commit()
+            beginTransaction().remove(currentFragment).add(R.id.fragmentContainer, fragment).addToBackStack(null).commit()
         }
     }
 
@@ -180,8 +173,7 @@ class MainActivity : AppCompatActivity() {
             if (PlaybackState.currentSong.value != null) {
                 with(MiniPlayerFragment()) {
                     if (!supportFragmentManager.fragments.contains(this)) {
-                        supportFragmentManager.beginTransaction().add(R.id.overlay_container, this)
-                            .commit()
+                        supportFragmentManager.beginTransaction().add(R.id.overlay_container, this).commit()
                     }
                 }
             }

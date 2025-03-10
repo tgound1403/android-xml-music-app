@@ -2,6 +2,7 @@ package com.tmatraining.musicapp.presentation.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,10 @@ import dagger.hilt.android.scopes.FragmentScoped
 
 @FragmentScoped
 class TracksFragment : Fragment() {
+    companion object {
+        private const val TAG = "TracksFragment"
+    }
+
     private var _binding: FragmentTracksBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
@@ -31,6 +36,8 @@ class TracksFragment : Fragment() {
             Intent(requireContext(), PlayerActivity::class.java).apply {
                 PlaybackState.currentList.value = viewModel.tracks.value
                 PlaybackState.currentSong.value = song
+                PlaybackState.isPlaying.value = false
+                Log.i(TAG, "onClick: ${PlaybackState.isPlaying.value}")
                 startActivity(this)
             }
         }

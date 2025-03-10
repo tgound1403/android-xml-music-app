@@ -12,8 +12,7 @@ import javax.inject.Inject
 class SongDataSource @Inject constructor(@ApplicationContext private val context: Context) {
     fun getSongsFromDownloads(): List<Song> {
         val songs = mutableListOf<Song>()
-        val downloadsDir =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 
         if (downloadsDir.exists() && downloadsDir.isDirectory) {
             downloadsDir.listFiles()?.forEach { file ->

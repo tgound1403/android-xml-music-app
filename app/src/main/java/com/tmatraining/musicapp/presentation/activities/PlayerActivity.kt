@@ -53,21 +53,6 @@ class PlayerActivity : AppCompatActivity() {
         setUpTabLayout()
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.i(TAG, "onResume")
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        Log.i(TAG, "onRestart")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.i(TAG, "onStart")
-    }
-
     private fun setUpViewPager() {
         activityViewPager.apply {
             adapter = object : FragmentStateAdapter(this@PlayerActivity) {

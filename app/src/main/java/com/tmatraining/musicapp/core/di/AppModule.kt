@@ -24,9 +24,7 @@ object DatabaseModule {
     fun provideAppDatabase(
         @ApplicationContext context: Context
     ): AppDatabase {
-        return Room.databaseBuilder(
-            context, AppDatabase::class.java, "app_database"
-        ).fallbackToDestructiveMigration().build()
+        return Room.databaseBuilder(context, AppDatabase::class.java, "app_database").fallbackToDestructiveMigration().build()
     }
 
     @Provides
@@ -44,9 +42,7 @@ object RepositoryModule {
         return SongRepositoryImpl(
             SongDataSource(context), SongLocalDataSource(
                 DatabaseModule.provideSongDao(
-                    DatabaseModule.provideAppDatabase(
-                        context
-                    )
+                    DatabaseModule.provideAppDatabase(context)
                 )
             )
         )

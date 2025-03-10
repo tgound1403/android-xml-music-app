@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,7 +45,6 @@ class PlayerFragment : Fragment() {
             val binder = service as MusicService.MusicBinder
             musicService = binder.getService()
             viewModel.setMusicService(musicService!!)
-            viewModel.initialize()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -114,6 +114,7 @@ class PlayerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        Log.i(TAG, "onResume: ${PlaybackState.isPlaying.value} ")
         viewModel.initialize()
     }
 

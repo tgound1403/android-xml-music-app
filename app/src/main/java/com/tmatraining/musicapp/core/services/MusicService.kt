@@ -41,7 +41,7 @@ class MusicService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.On
 
     private val mediaPlayer = MediaPlayer()
     private val binder = MusicBinder()
-    private var isPrepared = false
+    private var isReady = false
     private var positionUpdateJob: Job? = null
     private val serviceScope = CoroutineScope(Dispatchers.Main)
 
@@ -79,7 +79,7 @@ class MusicService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.On
     }
 
     fun continuePlay() {
-        if (isPrepared && !isPlaying()) {
+        if (isReady && !isPlaying()) {
             mediaPlayer.start()
             PlaybackState.isPlaying.value = true
             updateNotification()
@@ -90,10 +90,10 @@ class MusicService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.On
     fun startPlaying(song: Song) {
         try {
             mediaPlayer.reset()
-            isPrepared = false
+            isReady = false
             mediaPlayer.setDataSource(this, Uri.parse(song.uri))
             mediaPlayer.prepare()
-            isPrepared = true
+            isReady = true
             mediaPlayer.start()
             PlaybackState.currentSong.value = song
             PlaybackState.isPlaying.value = true
@@ -136,12 +136,15 @@ class MusicService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.On
 
     fun isPlaying(): Boolean = mediaPlayer.isPlaying
 
-    private fun getCurrentPosition(): Int = if (isPrepared) mediaPlayer.currentPosition else 0
+    private fun getCurrentPosition(): Int = if (isReady) mediaPlayer.currentPosition else 0
 
     fun seekTo(position: Int) {
-        if (isPrepared) {
+        if (isReady) {
             mediaPlayer.seekTo(position)
             PlaybackState.currentPosition.value = position
+            if (!isPlaying()) {
+                continuePlay()
+            }
         }
     }
 
@@ -169,7 +172,7 @@ class MusicService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.On
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
         PlaybackState.isPlaying.value = false
         PlaybackState.currentPosition.value = 0
-        isPrepared = false
+        isReady = false
         updateNotification()
         stopPositionUpdate()
         return true
@@ -198,7 +201,7 @@ class MusicService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.On
             addAction(R.drawable.skip_previous_24px, "Previous", createPendingIntent("PREVIOUS"))
 
             if (isPlaying) {
-                addAction(R.drawable.stop_24px, "Pause", createPendingIntent("PAUSE"))
+                addAction(R.drawable.stop_24px, "Pause", createPendingIntent("PAUSE")).setOngoing(false)
             } else {
                 addAction(R.drawable.play_arrow_24px, "Play", createPendingIntent("PLAY"))
             }
@@ -208,10 +211,10 @@ class MusicService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.On
     }
 
     private fun createDefaultNotification(): Notification {
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+        return NotificationCompat.Builder(this, CHANNEL_ID).setAutoCancel(true)
             .setSmallIcon(R.drawable.ic_launcher_foreground).setContentTitle("Music Player")
-            .setContentText("No song playing").setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH).build()
+            .setContentText("No song playing").setOngoing(false)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT).build()
     }
 
     private fun updateNotification() {
